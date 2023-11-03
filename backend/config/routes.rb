@@ -7,4 +7,14 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  resources :transactions, only: [:create]
+
+  resources :users, param: :wallet, only: [:show, :create] do
+    resources :transactions, only: [:index]
+    resources :memberships, only: [:index]
+    resources :communities, only: [:create]
+  end
+
+  resources :communities, only: [:index]
 end
