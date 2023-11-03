@@ -40,5 +40,18 @@ describe("Community Keys", function () {
         expect(onchainSafeAddress).to.equal(safeAddress.address);
       });
     });
+
+    describe("buyKeys", () => {
+      it("should buy a key", async () => {
+        await communityKeysContract.connect(creator).createCommunity(safeAddress.address, 5, "denites");
+
+        const price = await communityKeysContract.getBuyPrice(creator.address, 5);
+        const action = communityKeysContract.connect(buyer1).buyKeys(creator.address, 5, { value: price });
+
+        await expect(action).not.to.be.reverted;
+        const onchainKeySupply = await communityKeysContract.communityKeys(creator.address, buyer1.address);
+        expect(onchainKeySupply).to.equal(5);
+      });
+    });
   });
 });
