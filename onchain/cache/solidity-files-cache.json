@@ -35,6 +35,41 @@
       "artifacts": [
         "Example"
       ]
+    },
+    "/Users/franciscoleal/Documents/workspace/talentprotocol/hackathons/ethlisbon-2023/onchain/contracts/CommunityKeys.sol": {
+      "lastModificationDate": 1699037316200,
+      "contentHash": "67d6c5ed0762514c001d2937ff8c97db",
+      "sourceName": "contracts/CommunityKeys.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "CommunityKeys"
+      ]
     }
   }
 }

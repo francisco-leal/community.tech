@@ -1,7 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 
 const INFURA_API_KEY = "KEY";
-const SEPOLIA_PRIVATE_KEY = "YOUR SEPOLIA PRIVATE KEY";
+const SEPOLIA_PRIVATE_KEY = "0x1111111111111111111111111111111111111111111111111111111111111111";
 
 module.exports = {
   solidity: "0.8.19",
