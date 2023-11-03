@@ -89,7 +89,7 @@ contract CommunityKeys {
     uint256 price = getBuyPrice(keysSubject, amount);
     uint256 fee = fees[keysSubject];
 
-    uint256 subjectFee = price * fee / 1 ether;
+    uint256 subjectFee = (price * fee) / 1 ether;
     return price + subjectFee;
   }
 
@@ -101,21 +101,21 @@ contract CommunityKeys {
     return price - subjectFee;
   }
 
-  function buyKeys(address keysSubject, uint256 amount) public payable {
+  function buyKey(address keysSubject) public payable {
     uint256 supply = communityKeysSupply[keysSubject];
     require(supply != 0, "Community does not exist yet");
 
-    uint256 price = getPrice(supply, amount);
+    uint256 price = getPrice(supply, 1);
     uint256 fee = fees[keysSubject];
     uint256 subjectFee = price * fee / 1 ether;
     require(msg.value >= price + subjectFee, "Insufficient payment");
     
-    communityKeys[keysSubject][msg.sender] += amount;
-    communityKeysSupply[keysSubject] = supply + amount;
+    communityKeys[keysSubject][msg.sender] += 1;
+    communityKeysSupply[keysSubject] = supply + 1;
     emit CommunityKeyBought(
       keysSubject,
       msg.sender,
-      amount,
+      1,
       price + subjectFee,
       subjectFee
     );

@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-ethers");
 
 const INFURA_API_KEY = "KEY";
 const SEPOLIA_PRIVATE_KEY = "0x1111111111111111111111111111111111111111111111111111111111111111";
