@@ -70,6 +70,22 @@ namespace :bot do
           end
         end
       else
+        if message.my_chat_member
+          # Get the previous and current status of the bot in the chat
+          previous_status = message.my_chat_member.old_chat_member.status
+          new_status = message.my_chat_member.new_chat_member.status
+    
+          # Check if the bot has become an administrator
+          if previous_status != 'administrator' && new_status == 'administrator'
+            chat_id = message.my_chat_member.chat.id
+            chat_title = message.my_chat_member.chat.title
+    
+            community = Community.find_by(title: chat_title)
+            community.update!(telegram_chat_id: chat_id)
+    
+            puts "Bot has become an admin in chat: #{chat_title} (#{chat_id})"
+          end
+        end
         bot.api.send_message(chat_id: message.chat.id, text: "The text you've sent is not valid")
       end
     end
