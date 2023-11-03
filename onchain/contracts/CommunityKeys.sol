@@ -6,6 +6,7 @@ contract CommunityKeys {
   // communityKeys (community_address address, buyer address, amount uint256)  
   mapping(address => mapping(address => uint256)) public communityKeys;
 
+  mapping(address => string) public names;
   mapping(address => uint256) public communityKeysSupply;
 
   // fees  (community_address address, fee uint256)
@@ -14,7 +15,7 @@ contract CommunityKeys {
   // safes  (community_address address, safe address)
   mapping(address => address) public safes;
 
-  event CommunityCreated(address indexed _safe, address indexed _owner, uint256 _fee);
+  event CommunityCreated(address indexed _safe, address indexed _owner, uint256 _fee, string _name);
 
   /**
     * Event emitted when a community key is bought.
@@ -54,7 +55,14 @@ contract CommunityKeys {
     */
   constructor() {}
 
-  // buyMembership(community_address, amount_of_keys) payable
+  function createCommunity(address safe, uint256 fee, string memory name) public {
+    require(safes[msg.sender] == address(0), "Community already exists");
+    safes[msg.sender] = safe;
+    fees[msg.sender] = fee;
+    names[msg.sender] = name;
+    emit CommunityCreated(safe, msg.sender, fee, name);
+  }
+
   function getPrice(uint256 supply, uint256 amount) public pure returns (uint256) {
     uint256 sum1 = supply == 0 ? 0 : (supply - 1 )* (supply) * (2 * (supply - 1) + 1) / 6;
     uint256 sum2 = supply == 0 && amount == 1 
