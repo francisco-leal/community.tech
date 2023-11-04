@@ -90,7 +90,7 @@ export default function MembersPage({ params }: { params: { name: string } }) {
               </div>
               <div className="text-right">
                 <p className="font-semibold">0.0032 ETH</p>
-                <span className="inline-block mt-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">{membership.tier} - {membership.keys} keys</span>
+                {membership.tier && <span className={`inline-block mt-1 ${membership.tier == "Gold" ? "bg-yellow-300" : "bg-gray-500"} text-white text-xs px-2 py-1 rounded-full`}>{membership.tier}</span>}
               </div>
             </div>
             ))}

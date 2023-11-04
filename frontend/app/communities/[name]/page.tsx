@@ -105,7 +105,7 @@ export default function CommunityPage({ params }: { params: { name: string } }) 
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Joined: {membership.initiated_at}</p>
               </div>
               <div className="text-right">
-              <span className={`inline-block mt-1 ${membership.tier == "Gold" ? "bg-yellow-300" : "bg-blue-500"} text-white text-xs px-2 py-1 rounded-full`}>{membership.tier} - {membership.keys} keys</span>
+              {membership.tier && <span className={`inline-block mt-1 ${membership.tier == "Gold" ? "bg-yellow-300" : "bg-gray-500"} text-white text-xs px-2 py-1 rounded-full`}>{membership.tier}</span>}
               </div>
             </div>
             ))}

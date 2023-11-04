@@ -11,7 +11,7 @@ class MembershipsController < ApplicationController
   end
 
   def community_members
-    community = Community.where("lower(name) = ?", params[:community_name]).first
+    community = Community.find_by!("lower(name) = ?", params[:community_name]&.downcase)
 
     community_memberships = CommunityMembership.active.where(community: community)
 

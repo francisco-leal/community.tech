@@ -21,7 +21,9 @@ import { ConfigContext } from "@/lib/web3Context"
 import { COMMUNITY_CONTRACT_ADDRESS, CHAIN_ID } from "@/lib/utils"
  
 export function TradeKeysDialog({ communityName }: { communityName: string }) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isLoadingBuy, setIsLoadingBuy] = React.useState<boolean>(false)
+  const [isLoadingSell, setIsLoadingSell] = React.useState<boolean>(false)
+  const isLoading = isLoadingBuy || isLoadingSell;
   const [sellPrice, setSellPrice] = React.useState<string>("0");
   const [buyPrice, setBuyPrice] = React.useState<string>("0");
   const [numberOfKeys, setNumberOfKeys] = React.useState<number>(0);
@@ -54,7 +56,7 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
 
   async function buyKey(event: React.SyntheticEvent) {
     event.preventDefault()
-    setIsLoading(true)
+    setIsLoadingBuy(true)
     
     if(web3Auth) {
       const web3AuthProvider = web3Auth.getProvider();
@@ -82,12 +84,12 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
       }
     }
 
-    setIsLoading(false)
+    setIsLoadingBuy(false)
   }
 
   async function sellKey(event: React.SyntheticEvent) {
     event.preventDefault()
-    setIsLoading(true)
+    setIsLoadingSell(true)
     
     if(web3Auth) {
       // @ts-ignore
@@ -105,7 +107,7 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
       await transactionsApi.createTransaction(sellAction.hash, CHAIN_ID)
     }
 
-    setIsLoading(false)
+    setIsLoadingSell(false)
   }
 
   async function finish(event: React.SyntheticEvent) {
@@ -142,14 +144,14 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
         </AlertDialogHeader>
           {!telegramCode && (
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              {!isLoading && <AlertDialogCancel>Cancel</AlertDialogCancel>}
               <Button
                 className="w-full bg-red-500 hover:bg-red-600 text-white dark:bg-red-300 dark:hover:bg-red-200"
                 variant="default"
                 onClick={sellKey}
                 disabled={isLoading}
               >
-                {isLoading && (
+                {isLoadingSell && (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Sell for {sellPrice} ETH
@@ -160,7 +162,7 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
                 onClick={buyKey}
                 disabled={isLoading}
               >
-                {isLoading && (
+                {isLoadingBuy && (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Buy for {buyPrice} ETH

@@ -11,7 +11,7 @@ class TransactionsController < ApplicationController
       chain_id: transaction_params["chain_id"]
     ).call
 
-    transactions = Transactionwere(tx_hash: transaction_params["tx_hash"])
+    transactions = Transaction.where(tx_hash: transaction_params["tx_hash"])
     render json: {transactions: TransactionBlueprint.render_as_json(transactions, view: :normal) }, status: :ok
   end
 
