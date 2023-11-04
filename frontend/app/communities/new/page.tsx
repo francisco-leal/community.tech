@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 
 export default function NewCommunity() {
+  const [wallet, setWallet] = React.useState<string>("Connect Wallet")
+  const [communityProfile, setCommunityProfile] = React.useState<any>({})
   const [step, setStep] = React.useState<number>(1)
   const router = useRouter()
 
@@ -29,24 +31,50 @@ export default function NewCommunity() {
     router.push('/communities')
   }
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedWallet = sessionStorage.getItem('wallet');
+      if (storedWallet) {
+        setWallet(storedWallet);
+      } else {
+        router.push('/');
+      }
+    }
+  });
+
+  const updateCommunityProfile = (e: string, target: string) => {
+    setCommunityProfile((prev: any) => ({
+      ...prev,
+      [target]: e
+    }));
+  };
+
+  const createSafeAndMove = (e: React.SyntheticEvent) => {
+    e.preventDefault()
+
+    // create safe
+
+    setStep((prev) => prev + 1)
+  }
+
   const firstStep = () => {
     return <>
       <div className="text-center text-2xl font-bold mb-4">Create community</div>
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
-        <Input id="name" placeholder="Enter community name" required />
+        <Input id="name" placeholder="Enter community name" required onChange={(e) => updateCommunityProfile(e.target.value, "name")}/>
       </div>
       <div className="space-y-2">
         <Label htmlFor="username">Handle</Label>
-        <Input id="handle" placeholder="Enter handle" required />
+        <Input id="handle" placeholder="Enter handle" required onChange={(e) => updateCommunityProfile(e.target.value, "handle")}/>
       </div>
       <div className="space-y-2">
         <Label htmlFor="picture">Picture URL</Label>
-        <Input id="picture" placeholder="Enter picture URL" required type="url" />
+        <Input id="picture" placeholder="Enter picture URL" required type="url" onChange={(e) => updateCommunityProfile(e.target.value, "profile_picture_url")}/>
       </div>
       <div className="flex justify-between">
         <Button variant="outline" onClick={onCancel}>Cancel</Button>
-        <Button onClick={nextStep}>Next</Button>
+        <Button onClick={createSafeAndMove}>Next</Button>
       </div>
     </>
   }
@@ -94,7 +122,7 @@ export default function NewCommunity() {
           className="text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white dark:text-blue-300 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-black"
           variant="outline"
         >
-          Connect Wallet
+          {wallet}
         </Button>
       </header>
       <main className="flex-grow flex justify-center mt-32">

@@ -1,10 +1,12 @@
 "use client"
+import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { useRouter } from 'next/navigation'
 
 export default function Communities() {
+  const [wallet, setWallet] = React.useState<string>("Connect Wallet")
   const router = useRouter()
 
   async function onClick(event: React.SyntheticEvent, name: string) {
@@ -27,6 +29,17 @@ export default function Communities() {
     router.push(`/communities/new`);
   }
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedWallet = sessionStorage.getItem('wallet');
+      if (storedWallet) {
+        setWallet(storedWallet);
+      } else {
+        router.push('/');
+      }
+    }
+  });
+
   return (
     <div className="flex flex-col h-screen">
       <header className="fixed top-0 left-0 right-0 bg-white dark:bg-zinc-800 shadow-md z-50 p-4 flex items-center justify-between">
@@ -35,7 +48,7 @@ export default function Communities() {
           className="text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white dark:text-blue-300 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-black"
           variant="outline"
         >
-          Connect Wallet
+          {wallet}
         </Button>
       </header>
       <main className="pt-20 pb-16">

@@ -17,10 +17,18 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     event.preventDefault()
     setIsLoading(true)
 
-    setTimeout(() => {
-      router.push('/setup')
-      setIsLoading(false)
-    }, 3000)
+    // @ts-ignore
+    const {web3AuthModalPack} = window;
+    if(web3AuthModalPack) {
+      const authKitSignData = await web3AuthModalPack.signIn()
+
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('wallet', authKitSignData.eoa);
+      }
+    }
+
+    router.push('/setup')
+    setIsLoading(false)
   }
 
   return (
