@@ -23,8 +23,8 @@ const createCommunity = async (
   );
 };
 
-const getCommunities = (keyword: string, name: string) => {
-  return axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/communtities`, {
+const getCommunities = (keyword: string | null, name: string| null) => {
+  return axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/communities`, {
     params: {
       keyword: keyword,
       name: name,
@@ -32,7 +32,7 @@ const getCommunities = (keyword: string, name: string) => {
   });
 }
 
-export const communities = {
+export const communitiesApi = {
   createCommunity,
   getCommunities
 };
