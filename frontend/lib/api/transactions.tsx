@@ -6,6 +6,11 @@ const createTransaction = (tx_hash: string, chain_id: string) => {
     {
       tx_hash,
       chain_id
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
   );
 };

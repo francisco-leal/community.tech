@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const createCommunity = (
+const createCommunity = async (
   wallet: string,
   name: string,
   description: string,
@@ -8,12 +8,17 @@ const createCommunity = (
   safe_address: string
   ) => {
   return axios.post(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/${wallet}/communities`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${wallet}/communities`,
     {
       name,
       description,
       picture_url,
       safe_address,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
   );
 };

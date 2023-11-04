@@ -6,7 +6,10 @@ class TransactionsController < ApplicationController
   end
 
   def create
-    transactions = CreateTransaction.new(transaction_params).call
+    transactions = CreateTransaction.new(
+      tx_hash: transaction_params["tx_hash"],
+      chain_id: transaction_params["chain_id"]
+    ).call
 
     render json: {transactions: TransactionBlueprint.render_as_json(transactions, view: :normal) }, status: :ok
   end
