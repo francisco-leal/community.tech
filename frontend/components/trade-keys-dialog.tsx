@@ -69,7 +69,12 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
       const buyAction = await contract.connect(signer).buyKey(communityName, { value: price });
       await buyAction.wait();
 
-      await transactionsApi.createTransaction(buyAction.hash, CHAIN_ID)
+      try {
+        await transactionsApi.createTransaction(buyAction.hash, CHAIN_ID)
+      } catch {
+        // ignore
+      }
+
       if (numberOfKeys == 0) {
         const response = await usersApi.getUser(await signer.getAddress())
 
@@ -135,10 +140,9 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
               Hold at least 5 keys
             </p>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
           {!telegramCode && (
-            <>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
               <Button
                 className="w-full bg-red-500 hover:bg-red-600 text-white dark:bg-red-300 dark:hover:bg-red-200"
                 variant="default"
@@ -161,16 +165,15 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
                 )}
                 Buy for {buyPrice} ETH
               </Button>
-            </>
+            </AlertDialogFooter>
           )}
           {!!telegramCode && (
-            <>
-              <p className="mt-4 text-center text-xl font-semibold">Talk with our bot for access, this is your one time code</p>
-              <p className="mt-4 text-center text-xl font-semibold">{telegramCode}</p>
+            <AlertDialogFooter className="sm:flex-col sm:items-center">
+              <p className="mt-4 text-center font-semibold">Talk with our bot for access, this is your one time code</p>
+              <p className="mb-4 mt-2 text-center text-xl font-semibold">{telegramCode}</p>
               <Button onClick={finish}>Configure Telegram</Button>
-            </>
+            </AlertDialogFooter>
           )}
-        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   )

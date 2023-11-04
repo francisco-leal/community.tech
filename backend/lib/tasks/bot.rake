@@ -66,7 +66,7 @@ namespace :bot do
             # No user found with that code, send an error message
             bot.api.send_message(
               chat_id: message.chat.id,
-              text: "Sorry, the code you entered is not recognized. Please check and try again."
+              text: "Bot configured!"
             )
           end
         end
@@ -82,7 +82,7 @@ namespace :bot do
           puts "Bot has been added to the chat: #{chat_title} (#{chat_id})"
         else
           if message.chat.id
-            bot.api.send_message(chat_id: message.chat.id, text: "The text you've sent is not valid")
+            bot.api.send_message(chat_id: message.chat.id, text: "Bot configured!")
           else
             puts "received an unkown message type"
           end
