@@ -11,6 +11,7 @@ import { ethers } from 'ethers'
 import CommunityKeys from "@/lib/abi/CommunityKeys.json"
 import { communities } from "@/lib/api/communities"
 import { transactions } from "@/lib/api"
+import { COMMUNITY_CONTRACT_ADDRESS, CHAIN_ID } from "@/lib/utils"
 
 interface CreateSafeProps extends React.HTMLAttributes<HTMLDivElement> {
   nextStep: Function,
@@ -22,9 +23,6 @@ interface CreateSafeProps extends React.HTMLAttributes<HTMLDivElement> {
     description: string,
   }
 }
-
-const COMMUNITY_CONTRACT_ADDRESS = "0x664d86CF8D30EEC4169393a70EB3aa796BE85642";
-const CHAIN_ID = "1115";
 
 export function CreateCommunity({ className, nextStep, profile, ...props }: CreateSafeProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
