@@ -13,17 +13,26 @@ class CreateTransaction
   }
 
   def call
-    transaction = Transaction.create!(
-      tx_hash:,
-      chain_id:,
-      user:,
-      args:,
-      event_type:
-    )
+    existing_tx = Transaction.find_by(tx_hash:, chain_id:)
+    raise "Tx: #{tx_hash} already imported" if existing_tx
 
-    upsert_community_membership(transaction) if transaction.community_key_bought? || transaction.community_key_sold?
+    ActiveRecord::Base.transaction do
+      events.map do |event|
+        decoded_event = event[1]
 
-    transaction
+        transaction = Transaction.create!(
+          tx_hash:,
+          chain_id:,
+          user:,
+          args: args(decoded_event),
+          event_type: event_type(decoded_event)
+        )
+
+        upsert_community_membership(transaction) if transaction.community_key_bought? || transaction.community_key_sold?
+
+        transaction
+      end
+    end
   end
 
   private
@@ -38,16 +47,16 @@ class CreateTransaction
     transaction_receipt["result"]["from"]
   end
 
-  def event_type
+  def event_type(decoded_event)
     EVENT_MAP[decoded_event.name]
   end
 
-  def args
+  def args(decoded_event)
     decoded_event.kwargs
   end
 
   def upsert_community_membership(transaction)
-    community = Community.find_by(name: transaction.args["community_name"])
+    community = Community.find_by(name: transaction.args["_community_name"])
     raise "Unable to find community!" unless community
 
     community_membership = CommunityMembership.find_by(
@@ -62,21 +71,16 @@ class CreateTransaction
         initiated_at: Time.current
       )
 
-      community_membership.update!(community_membership.keys += transaction.args["amount_of_keys"].to_i)
+      community_membership.update!(keys: community_membership.keys += transaction.args["_amount_of_keys"].to_i)
     elsif transaction.community_key_sold?
-      raise "Commnunity Membership needs to exist if key was sold" unless community_membership
+      raise "Community Membership needs to exist if key was sold" unless community_membership
 
-      community_membership.update!(community_membership.keys -= transaction.args["amount_of_keys"].to_i)
+      community_membership.update!(keys: community_membership.keys -= transaction.args["_amount_of_keys"].to_i)
     end
   end
 
-  def decoded_event
-    @decoded_event ||= event[1]
-  end
-
-  def event
-    # Let's assume only one event per tx
-    Eth::Abi::Event.decode_logs(events_interface, transaction_receipt["result"]["logs"])[0]
+  def events
+    Eth::Abi::Event.decode_logs(events_interface, transaction_receipt["result"]["logs"])
   end
 
   def events_interface
@@ -94,17 +98,16 @@ class CreateTransaction
   end
 
   def community_keys_contract
-    Eth::Contract.from_abi(name: "CommunityKeys", address: ENV["COMMUNITY_KEYS_CONTRACT_ADDRESS"], abi: contract_abi["abi"])
-  end
-
-  def community_keys_contract_address
-    ENV["COMMUNITY_KEYS_CONTRACT_ADDRESS"]
+    Eth::Contract.from_abi(
+      name: "CommunityKeys",
+      address: ENV["COMMUNITY_KEYS_CONTRACT_ADDRESS"],
+      abi: contract_abi["abi"]
+    )
   end
 
   def contract_abi
     @ontract_abi ||= JSON.parse(File.read("lib/abi/CommunityKeys.json"))
   end
-
 
   def provider
     @provider ||= Eth::Client.create rpc_url

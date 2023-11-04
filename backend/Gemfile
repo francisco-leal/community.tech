@@ -27,6 +27,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
   gem "rails-erd"
   gem 'pry', '~> 0.14.2'
+  gem "dotenv-rails"
 end
 
 group :development do

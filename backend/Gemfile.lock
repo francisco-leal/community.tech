@@ -89,6 +89,10 @@ GEM
     debug (1.8.0)
       irb (>= 1.5.0)
       reline (>= 0.3.1)
+    dotenv (2.8.1)
+    dotenv-rails (2.8.1)
+      dotenv (= 2.8.1)
+      railties (>= 3.2)
     drb (2.1.1)
       ruby2_keywords
     dry-core (1.0.1)
@@ -272,6 +276,7 @@ DEPENDENCIES
   blueprinter
   bootsnap
   debug
+  dotenv-rails
   dry-initializer
   error_highlight (>= 0.4.0)
   eth

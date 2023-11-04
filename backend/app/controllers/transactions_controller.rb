@@ -1,14 +1,14 @@
 class TransactionsController < ApplicationController
   def index
-    transactions = Transaction.where(owner: user!)
+    transactions = Transaction.where(user: user!)
 
     render json: {transactions: TransactionBlueprint.render_as_json(transactions, view: :normal) }, status: :ok
   end
 
   def create
-    transaction = CreateTransaction.new(transaction_params).call
+    transactions = CreateTransaction.new(transaction_params).call
 
-    render json: {transaction: TransactionBlueprint.render_as_json(transaction, view: :normal) }, status: :ok
+    render json: {transactions: TransactionBlueprint.render_as_json(transactions, view: :normal) }, status: :ok
   end
 
   private
