@@ -8,7 +8,7 @@ const createCommunity = (
   safe_address: string
   ) => {
   return axios.post(
-    `${process.env.API_BASE_URL}/${wallet}/communities`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/${wallet}/communities`,
     {
       name,
       description,
@@ -19,7 +19,7 @@ const createCommunity = (
 };
 
 const getCommunities = (keyword: string, name: string) => {
-  return axios.get(`${process.env.API_BASE_URL}/communtities`, {
+  return axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/communtities`, {
     params: {
       keyword: keyword,
       name: name,
