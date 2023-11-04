@@ -75,7 +75,15 @@ class CreateTransaction
     elsif transaction.community_key_sold?
       raise "Community Membership needs to exist if key was sold" unless community_membership
 
-      community_membership.update!(keys: community_membership.keys -= transaction.args["_amount_of_keys"].to_i)
+      new_keys = community_membership.keys - transaction.args["_amount_of_keys"].to_i
+      community_membership.update!(keys: new_keys)
+
+      if new_keys.zero?
+        KickFromTelegram.new(
+          telegram_chat_id: community.telegram_chat_id,
+          telegram_user_id: user.telegram_user_id
+        ).call
+      end
     end
   end
 

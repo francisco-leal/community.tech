@@ -19,15 +19,16 @@ namespace :bot do
       case message
       when Telegram::Bot::Types::CallbackQuery
         if message.data
-          membership = Membership.find_by(name: message.data)
+          community = Community.where("lower(name) = ?", message.data&.downcase).first
+
           response = bot.api.createChatInviteLink(
-            chat_id: membership.chat_id,
+            chat_id: community.telegram_chat_id,
             member_limit: 1 # This makes the link single-use
           )
 
           bot.api.answer_callback_query(
             callback_query_id: message.id,
-            text: "You're ready to join #{membership.name}. Tap to join the community!",
+            text: "You're ready to join #{community.name.titleize}. Tap to join the community!",
             url: response["result"]["invite_link"]
           )
         else
@@ -45,14 +46,14 @@ namespace :bot do
           )
         else
           # The user might have sent their unique code, attempt to find the user by code
-          user = User.find_by(code: message.text)
-    
+          user = User.find_by(telegram_code: message.text)
+
           if user
             # User found, update the telegram_user_id
             user.update!(telegram_user_id: message.from.id)
-  
+
             kb = [[]]
-            Membership.where(user: user).map do |membership|
+            CommunityMembership.where(user: user).map do |membership|
               kb[0] << Telegram::Bot::Types::InlineKeyboardButton.new(text: membership.community.name, callback_data: membership.community.name)
             end
             markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
@@ -74,15 +75,15 @@ namespace :bot do
           # Get the previous and current status of the bot in the chat
           previous_status = message.my_chat_member.old_chat_member.status
           new_status = message.my_chat_member.new_chat_member.status
-    
+
           # Check if the bot has become an administrator
           if previous_status != 'administrator' && new_status == 'administrator'
             chat_id = message.my_chat_member.chat.id
             chat_title = message.my_chat_member.chat.title
-    
-            community = Community.find_by(title: chat_title)
+
+            community = Community.find_by(name: chat_title)
             community.update!(telegram_chat_id: chat_id)
-    
+
             puts "Bot has become an admin in chat: #{chat_title} (#{chat_id})"
           end
         end
