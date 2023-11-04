@@ -71,10 +71,12 @@ namespace :bot do
           end
         end
       else
-        if message.my_chat_member
+        if message.class == Telegram::Bot::Types::ChatMemberUpdated
           # Get the previous and current status of the bot in the chat
-          previous_status = message.my_chat_member.old_chat_member.status
-          new_status = message.my_chat_member.new_chat_member.status
+          puts "Skipping for now"
+          next
+          previous_status = message.old_chat_member.status
+          new_status = message.new_chat_member.status
 
           # Check if the bot has become an administrator
           if previous_status != 'administrator' && new_status == 'administrator'
@@ -86,8 +88,13 @@ namespace :bot do
 
             puts "Bot has become an admin in chat: #{chat_title} (#{chat_id})"
           end
+        else
+          if message.chat.id
+            bot.api.send_message(chat_id: message.chat.id, text: "The text you've sent is not valid")
+          else
+            puts "received an unkown message type"
+          end
         end
-        bot.api.send_message(chat_id: message.chat.id, text: "The text you've sent is not valid")
       end
     end
   end

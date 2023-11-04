@@ -10,6 +10,15 @@ const createUser = (wallet: string, telegram_handle: string) => {
   );
 };
 
+const getUser = (wallet: string) => {
+  return axios.get(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${wallet}`
+  );
+};
+
+
+
 export const users = {
-  createUser
+  createUser,
+  getUser
 };
