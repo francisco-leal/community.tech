@@ -3,14 +3,23 @@ import * as React from 'react'
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 import { Icons } from "@/components/icons"
+import { users } from "@/lib/api";
 
 export default function Setup() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [telegramHandle, setTelegramHandle] = React.useState<string>("")
   const router = useRouter()
 
   async function onClick(event: React.SyntheticEvent) {
     event.preventDefault()
     setIsLoading(true)
+
+    const wallet = sessionStorage.getItem('wallet');
+    if(wallet) {
+      await users.createUser(wallet, telegramHandle).catch((error) => {
+        console.error(error);
+      });;
+    }
 
     setTimeout(() => {
       router.push('/communities')
@@ -48,6 +57,7 @@ export default function Setup() {
               placeholder="@username"
               required
               type="text"
+              onChange={(event) => setTelegramHandle(event.target.value)}
             />
           </div>
           <div className="flex justify-center">

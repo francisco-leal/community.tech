@@ -9,7 +9,7 @@ import { Icons } from "@/components/icons"
 
 import { ethers } from 'ethers'
 import CommunityKeys from "@/lib/abi/CommunityKeys.json"
-import { communities } from "@/lib/api/communities"
+import { communitiesApi } from "@/lib/api/communities"
 import { transactions } from "@/lib/api"
 
 interface CreateSafeProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -47,7 +47,7 @@ export function CreateCommunity({ className, nextStep, profile, ...props }: Crea
       const createTx = await contract.connect(signer).createCommunity(profile.safeAddress, ethers.utils.parseUnits(profile.fee, "ether"), profile.name);
       await createTx.wait();
 
-      await communities.createCommunity(
+      await communitiesApi.createCommunity(
         await signer.getAddress(),
         profile.name,
         "",

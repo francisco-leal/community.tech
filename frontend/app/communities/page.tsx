@@ -4,9 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { useRouter } from 'next/navigation'
+import { communitiesApi } from "@/lib/api"
+import { Community } from "@/lib/api/types"
 
 export default function Communities() {
   const [wallet, setWallet] = React.useState<string>("Connect Wallet")
+  const [communities, setCommunities] = React.useState<Community[]>([])
+  const [keyword, setKeyword] = React.useState<string>("")
   const router = useRouter()
 
   async function onClick(event: React.SyntheticEvent, name: string) {
@@ -40,6 +44,23 @@ export default function Communities() {
     }
   });
 
+  React.useEffect(() => {
+    getCommunities(null);
+  }, [])
+
+  function handleSearch(keyword: string) {
+    setKeyword(keyword);
+    getCommunities(keyword)
+  }
+
+  async function getCommunities(keyword: string | null) {
+    const response = await communitiesApi.getCommunities(keyword, null).catch(error => console.error(error));
+    console.log(response)
+    if(response && response.status == 200) {
+      setCommunities(response.data.communities);
+    }
+  }
+
   return (
     <div className="flex flex-col h-screen">
       <header className="fixed top-0 left-0 right-0 bg-white dark:bg-zinc-800 shadow-md z-50 p-4 flex items-center justify-between">
@@ -53,36 +74,24 @@ export default function Communities() {
       </header>
       <main className="pt-20 pb-16">
         <div className="p-4">
-          <Input className="w-full" placeholder="Search..." type="search" />
+          <Input className="w-full" value={keyword} placeholder="Search..." type="search" onChange={(e) => handleSearch(e.target.value)} />
           <div className="space-y-4 mt-4">
-            <div className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, "talentprotocol")}>
+            {communities.map((community) => (
+              <div key={community.name} className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, community.name)}>
               <Avatar className="h-10 w-10">
-                <AvatarImage alt="Community Avatar" src="/default-profile-picture.png" />
+                <AvatarImage alt="Community Avatar" src={community.profile_picture} />
                 <AvatarFallback>CA</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
-                <h4 className="text-md font-medium">Talent Protocol</h4>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Members: 120</p>
+                <h4 className="text-md font-medium">{community.name}</h4>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">Members: {community.members_count}</p>
               </div>
               <div className="text-right">
                 <p className="font-semibold">0.0032 ETH</p>
-                <span className="inline-block mt-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Owner</span>
+                <span className="inline-block mt-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">{community.owner.wallet}</span>
               </div>
             </div>
-            <div className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, "denites")}>
-              <Avatar className="h-10 w-10">
-                <AvatarImage alt="Community Avatar" src="/default-profile-picture.png" />
-                <AvatarFallback>CA</AvatarFallback>
-              </Avatar>
-              <div className="flex-grow">
-                <h4 className="text-md font-medium">Denites</h4>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Members: 80</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold">0.002 ETH</p>
-                <span className="inline-block mt-1 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Gold</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </main>
