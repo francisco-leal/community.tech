@@ -1,12 +1,51 @@
 "use client"
+import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { TradeKeysDialog } from "@/components/trade-keys-dialog"
 import { useRouter } from 'next/navigation'
 import Web3Provider from '@/lib/web3Context'
+import { membershipsApi, communitiesApi } from "@/lib/api"
+import { Membership, Community } from "@/lib/api/types"
 
 export default function CommunityPage({ params }: { params: { name: string } }) {
+  const [wallet, setWallet] = React.useState<string>("Connect Wallet")
   const router = useRouter()
+  const [community, setCommunity] = React.useState<Community>()
+  const [memberships, setMemberships] = React.useState<Membership[]>([])
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedWallet = sessionStorage.getItem('wallet');
+      if (storedWallet) {
+        setWallet(storedWallet);
+      } else {
+        router.push('/');
+      }
+    }
+  });
+
+  React.useEffect(() => {
+    getMemberships();
+    getCommunities();
+  }, [])
+
+  async function getCommunities() {
+    const response = await communitiesApi.getCommunities(null, params.name).catch(error => console.error(error));
+    console.log(response)
+    if(response && response.status == 200) {
+      setCommunity(response.data.communities[0]);
+    }
+  }
+
+
+  async function getMemberships() {
+    const response = await membershipsApi.getCommunityMemberships(params.name).catch(error => console.error(error));
+    console.log(response)
+    if(response && response.status == 200) {
+      setMemberships(response.data.memberships);
+    }
+  }
 
   async function onClick(event: React.SyntheticEvent, name: string) {
     event.preventDefault()
@@ -44,44 +83,33 @@ export default function CommunityPage({ params }: { params: { name: string } }) 
           <div className="p-4">
             <div className="flex items-center space-x-4 mb-6">
               <Avatar className="h-16 w-16">
-                <AvatarImage alt="Community Avatar" src="/default-profile-picture.png" />
+                <AvatarImage alt="Community Avatar" src={community?.picture_url} />
                 <AvatarFallback>CA</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
                 <h2 className="text-xl font-bold">{params.name}</h2>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Treasury Balance: 50 ETH</p>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">Owner: {community?.owner?.wallet}</p>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Key Price: 0.01 ETH</p>
               </div>
               <TradeKeysDialog />
             </div>
-            <h3 className="text-lg font-semibold mb-4">Members: 120</h3>
+            <h3 className="text-lg font-semibold mb-4">Members: {community?.members_count}</h3>
             <div className="space-y-4">
-              <div className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, "leal.eth")}>
-                <Avatar className="h-10 w-10">
-                  <AvatarImage alt="Member Avatar" src="/default-profile-picture.png" />
-                  <AvatarFallback>MA</AvatarFallback>
-                </Avatar>
-                <div className="flex-grow">
-                  <h4 className="text-md font-medium">leal.eth</h4>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">Joined: January 2023</p>
-                </div>
-                <div className="text-right">
-                  <span className="inline-block mt-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Owner</span>
-                </div>
+            {memberships.map((membership) => (
+              <div key={membership.user.wallet} className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, membership.user.wallet)}>
+              <Avatar className="h-10 w-10">
+                <AvatarImage alt="Member Avatar" src="/default-profile-picture.png" />
+                <AvatarFallback>MA</AvatarFallback>
+              </Avatar>
+              <div className="flex-grow">
+                <h4 className="text-md font-medium">{membership.user.telegram_handle || membership.user.wallet}</h4>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">Joined: {membership.initiated_at}</p>
               </div>
-              <div className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, "macedo.eth")}>
-                <Avatar className="h-10 w-10">
-                  <AvatarImage alt="Member Avatar" src="/default-profile-picture.png" />
-                  <AvatarFallback>MA</AvatarFallback>
-                </Avatar>
-                <div className="flex-grow">
-                  <h4 className="text-md font-medium">macedo.eth</h4>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">Joined: February 2023</p>
-                </div>
-                <div className="text-right">
-                  <span className="inline-block mt-1 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Gold</span>
-                </div>
+              <div className="text-right">
+              <span className={`inline-block mt-1 ${membership.tier == "Gold" ? "bg-yellow-300" : "bg-blue-500"} text-white text-xs px-2 py-1 rounded-full`}>{membership.tier} - {membership.keys} keys</span>
               </div>
+            </div>
+            ))}
             </div>
           </div>
         </main>
@@ -121,7 +149,7 @@ export default function CommunityPage({ params }: { params: { name: string } }) 
               <path d="M12 8v8" />
             </svg>
           </Button>
-          <Button variant="ghost" onClick={(e) => goToProfile(e, "leal.eth")}>
+          <Button variant="ghost" onClick={(e) => goToProfile(e, wallet)}>
             <svg
               className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-300"
               fill="none"
