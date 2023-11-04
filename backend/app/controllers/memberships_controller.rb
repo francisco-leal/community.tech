@@ -9,4 +9,17 @@ class MembershipsController < ApplicationController
       status: :ok
     )
   end
+
+  def community_members
+    community = Community.where("lower(name) = ?", params[:community_name]).first
+
+    community_memberships = CommunityMembership.active.where(community: community)
+
+    render(
+      json: {
+        memberships: CommunityMembershipBlueprint.render_as_json(community_memberships.includes(:community), view: :normal)
+      },
+      status: :ok
+    )
+  end
 end
