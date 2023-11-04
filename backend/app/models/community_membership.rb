@@ -8,6 +8,6 @@ class CommunityMembership < ApplicationRecord
 
   def tier
     return "Gold" if keys >= 5
-    return "Silver" if keys > 0
+    return "Silver" if keys >= 2
   end
 end
