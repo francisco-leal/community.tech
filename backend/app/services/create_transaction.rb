@@ -20,6 +20,8 @@ class CreateTransaction
       events.map do |event|
         decoded_event = event[1]
 
+        next unless decoded_event
+
         transaction = Transaction.create!(
           tx_hash:,
           chain_id:,
