@@ -9,17 +9,22 @@ import { Icons } from "@/components/icons"
 
 import { ethers } from 'ethers'
 import CommunityKeys from "@/lib/abi/CommunityKeys.json"
+import { communities } from "@/lib/api/communities"
+import { transactions } from "@/lib/api"
 
 interface CreateSafeProps extends React.HTMLAttributes<HTMLDivElement> {
   nextStep: Function,
   profile: {
     name: string,
     safeAddress: string,
-    fee: string
+    fee: string,
+    profile_picture_url: string,
+    description: string,
   }
 }
 
 const COMMUNITY_CONTRACT_ADDRESS = "0x664d86CF8D30EEC4169393a70EB3aa796BE85642";
+const CHAIN_ID = "1115";
 
 export function CreateCommunity({ className, nextStep, profile, ...props }: CreateSafeProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -41,6 +46,15 @@ export function CreateCommunity({ className, nextStep, profile, ...props }: Crea
 
       const createTx = await contract.connect(signer).createCommunity(profile.safeAddress, ethers.utils.parseUnits(profile.fee, "ether"), profile.name);
       await createTx.wait();
+
+      await communities.createCommunity(
+        await signer.getAddress(),
+        profile.name,
+        "",
+        profile.profile_picture_url,
+        profile.safeAddress
+      )
+      await transactions.createTransaction(createTx.hash, CHAIN_ID)
     }
 
     nextStep(event);

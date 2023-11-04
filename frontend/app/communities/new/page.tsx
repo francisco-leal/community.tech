@@ -11,7 +11,7 @@ import { CreateCommunity } from '@/components/create-community'
 export default function NewCommunity() {
   const [wallet, setWallet] = React.useState<string>("Connect Wallet")
   const [communityProfile, setCommunityProfile] = React.useState<any>({})
-  const [step, setStep] = React.useState<number>(1)
+  const [step, setStep] = React.useState<number>(2)
   const router = useRouter()
 
   async function onCancel(event: React.SyntheticEvent) {
@@ -63,7 +63,7 @@ export default function NewCommunity() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="username">Handle</Label>
-        <Input id="handle" placeholder="Enter handle" required onChange={(e) => updateCommunityProfile(e.target.value, "handle")}/>
+        <Input id="handle" placeholder="Choose a new handle" required onChange={(e) => updateCommunityProfile(e.target.value, "handle")}/>
       </div>
       <div className="space-y-2">
         <Label htmlFor="picture">Picture URL</Label>

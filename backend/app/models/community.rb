@@ -8,6 +8,14 @@ class Community < ApplicationRecord
   validates :name, uniqueness: true
 
   def telegram_invite_link
-    # TODO - TELEGRAM
+    token = ENV["TELEGRAM_BOT_TOKEN"]
+    bot = Telegram::Bot::Client.new(token)
+
+    response = bot.api.createChatInviteLink(
+      chat_id: community.telegram_chat_id,
+      member_limit: 1 # This makes the link single-use
+    )
+
+    response["result"]["invite_link"]
   end
 end
