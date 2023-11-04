@@ -16,5 +16,7 @@ Rails.application.routes.draw do
     resources :communities, only: [:create]
   end
 
-  resources :communities, only: [:index]
+  resources :communities, param: :name, only: [:index] do
+    get "memberships" => "memberships#community_members"
+  end
 end
