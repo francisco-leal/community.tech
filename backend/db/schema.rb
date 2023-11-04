@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_04_111122) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_04_192227) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "communities", force: :cascade do |t|
     t.string "name", null: false
-    t.string "description", null: false
+    t.string "description"
     t.string "picture_url"
     t.string "safe_address", null: false
     t.bigint "owner_id", null: false

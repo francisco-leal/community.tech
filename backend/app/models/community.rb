@@ -4,7 +4,7 @@ class Community < ApplicationRecord
   has_many :community_memberships
   has_many :users, through: :community_memberships
 
-  validates :name, :description, :safe_address, presence: true
+  validates :name, :safe_address, presence: true
   validates :name, uniqueness: true
 
   def telegram_invite_link

@@ -52,7 +52,7 @@ export default function CommunityPage({ params }: { params: { name: string } }) 
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Treasury Balance: 50 ETH</p>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Key Price: 0.01 ETH</p>
               </div>
-              <TradeKeysDialog />
+              <TradeKeysDialog communityName={params.name}/>
             </div>
             <h3 className="text-lg font-semibold mb-4">Members: 120</h3>
             <div className="space-y-4">
