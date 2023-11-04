@@ -63,7 +63,7 @@ export default function NewCommunity() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="username">Handle</Label>
-        <Input id="handle" placeholder="Enter handle" required onChange={(e) => updateCommunityProfile(e.target.value, "handle")}/>
+        <Input id="handle" placeholder="Choose a new handle" required onChange={(e) => updateCommunityProfile(e.target.value, "handle")}/>
       </div>
       <div className="space-y-2">
         <Label htmlFor="picture">Picture URL</Label>
