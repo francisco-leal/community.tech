@@ -31,13 +31,14 @@ export default function NewCommunity() {
 
   const firstStep = () => {
     return <>
+      <div className="text-center text-2xl font-bold mb-4">Create community</div>
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
         <Input id="name" placeholder="Enter community name" required />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" placeholder="Enter username" required />
+        <Label htmlFor="username">Handle</Label>
+        <Input id="handle" placeholder="Enter handle" required />
       </div>
       <div className="space-y-2">
         <Label htmlFor="picture">Picture URL</Label>
@@ -52,9 +53,9 @@ export default function NewCommunity() {
 
   const secondStep = () => {
     return <>
-      <div className="text-center text-2xl font-bold mb-4">Simple Title</div>
+      <div className="text-center text-2xl font-bold mb-4">Create community</div>
       <div className="mb-4 p-4 bg-green-100 rounded-lg">
-        <p className="font-semibold">Your community's SAFE wallet has been created. The address is:</p>
+        <p className="font-semibold">Your community{"&apos"}s SAFE wallet has been created. The address is:</p>
         <code className="block mt-2 text-sm bg-gray-200 rounded p-2">
           0xc0ffee254729296a45a3885639AC7E10F9d54979
         </code>
@@ -75,15 +76,13 @@ export default function NewCommunity() {
 
   const thirdStep = () => {
     return <>
-      <div className="text-center text-2xl font-bold mb-4">Simple Title</div>
-        <div className="mb-4 p-4 rounded-lg">
-          <p className="font-semibold text-xl">Congratulations! 🎉 Your community has been created.</p>
-          <p className="mt-4">As the owner of the community, you hold the first key</p>
-        </div>
-        <div className="flex justify-between">
-          <Button variant="outline" onClick={previousStep}>Back</Button>
-          <Button onClick={finish}>Configure Telegram</Button>
-        </div>
+      <div className="mb-4 p-4 rounded-lg">
+        <p className="font-semibold text-xl">Congratulations! 🎉 Your community has been created.</p>
+        <p className="mt-4">As the owner of the community, you hold the first key</p>
+      </div>
+      <div className="flex justify-center">
+        <Button onClick={finish}>Configure Telegram</Button>
+      </div>
     </>
   };
 
