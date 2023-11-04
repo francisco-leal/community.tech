@@ -16,12 +16,6 @@ class CommunitiesController < ApplicationController
   def create
     community = Community.create!(community_params.merge(owner: user!))
 
-    CommunityMembership.create!(
-      community: community,
-      user: user!,
-      initiated_at: Time.current
-    )
-
     render json: {community: CommunityBlueprint.render_as_json(community, view: :normal) }, status: :ok
   end
 
