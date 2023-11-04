@@ -13,7 +13,7 @@ export default function NewCommunity() {
   const [wallet, setWallet] = React.useState<string>("Connect Wallet")
   const [communityProfile, setCommunityProfile] = React.useState<any>({})
   const [telegramCode, setTelegramCode] = React.useState<string>("")
-  const [step, setStep] = React.useState<number>(3)
+  const [step, setStep] = React.useState<number>(1)
   const router = useRouter()
 
   async function onCancel(event: React.SyntheticEvent) {
