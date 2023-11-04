@@ -16,7 +16,9 @@ interface Community {
 interface Membership {
   keys: integer;
   tier: string;
+  initiated_at: string;
   community: Community;
+  user: User;
 }
 
 export const types = {
