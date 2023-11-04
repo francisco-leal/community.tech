@@ -7,11 +7,13 @@ import { useRouter } from 'next/navigation'
 import Web3Provider from '@/lib/web3Context'
 import { CreateSafe } from '@/components/create-safe'
 import { CreateCommunity } from '@/components/create-community'
+import { users } from '@/lib/api'
 
 export default function NewCommunity() {
   const [wallet, setWallet] = React.useState<string>("Connect Wallet")
   const [communityProfile, setCommunityProfile] = React.useState<any>({})
-  const [step, setStep] = React.useState<number>(1)
+  const [telegramCode, setTelegramCode] = React.useState<string>("")
+  const [step, setStep] = React.useState<number>(3)
   const router = useRouter()
 
   async function onCancel(event: React.SyntheticEvent) {
@@ -33,7 +35,7 @@ export default function NewCommunity() {
 
   async function finish(event: React.SyntheticEvent) {
     event.preventDefault()
-    router.push('/communities')
+    window.open("https://t.me/collective_tech_bot", "_blank")
   }
 
   React.useEffect(() => {
@@ -41,6 +43,9 @@ export default function NewCommunity() {
       const storedWallet = sessionStorage.getItem('wallet');
       if (storedWallet) {
         setWallet(storedWallet);
+        users.getUser(storedWallet).then((res) => {
+          setTelegramCode(res.data.user.telegram_code);
+        }).catch(() => console.log("ERROR FETCHING USER"));
       } else {
         router.push('/');
       }
@@ -103,7 +108,9 @@ export default function NewCommunity() {
     return <>
       <div className="mb-4 p-4 rounded-lg">
         <p className="font-semibold text-xl">Congratulations! 🎉 Your community has been created.</p>
-        <p className="mt-4">As the owner of the community, you hold the first key</p>
+        <p className="mt-4">As the owner of the community, you hold the first key! Now please talk with our telegram bot to get set up.</p>
+        <p className="mt-4 text-center">Your one time code</p>
+        <p className="mt-4 text-center text-xl font-semibold">{telegramCode}</p>
       </div>
       <div className="flex justify-center">
         <Button onClick={finish}>Configure Telegram</Button>
