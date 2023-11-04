@@ -3,7 +3,7 @@ import * as React from 'react'
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 import { Icons } from "@/components/icons"
-import { users } from "@/lib/api";
+import { usersApi } from "@/lib/api";
 
 export default function Setup() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -16,7 +16,7 @@ export default function Setup() {
 
     const wallet = sessionStorage.getItem('wallet');
     if(wallet) {
-      await users.createUser(wallet, telegramHandle).catch((error) => {
+      await usersApi.createUser(wallet, telegramHandle).catch((error) => {
         console.error(error);
       });;
     }

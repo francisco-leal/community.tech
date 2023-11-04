@@ -4,7 +4,7 @@ class MembershipsController < ApplicationController
 
     render(
       json: {
-        community_memberships: CommunityMembershipBlueprint.render_as_json(community_memberships.includes(:community), view: :normal)
+        memberships: CommunityMembershipBlueprint.render_as_json(community_memberships.includes(:community), view: :normal)
       },
       status: :ok
     )

@@ -4,7 +4,7 @@ import * as React from "react"
 import { ethers } from 'ethers'
 import CommunityKeys from "@/lib/abi/CommunityKeys.json"
 import { Icons } from "@/components/icons"
-import { transactions, users } from "@/lib/api"
+import { transactionsApi, usersApi } from "@/lib/api"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -69,9 +69,9 @@ export function TradeKeysDialog() {
       const buyAction = await contract.connect(signer).buyKey("denites", { value: price });
       await buyAction.wait();
 
-      await transactions.createTransaction(buyAction.hash, CHAIN_ID)
+      await transactionsApi.createTransaction(buyAction.hash, CHAIN_ID)
       if (numberOfKeys == 0) {
-        const response = await users.getUser(await signer.getAddress())
+        const response = await usersApi.getUser(await signer.getAddress())
 
         setTelegramCode(response.data.user.telegram_code);
       }
@@ -97,7 +97,7 @@ export function TradeKeysDialog() {
       const sellAction = await contract.connect(signer).sellKeys("denites", 1);
       await sellAction.wait();
 
-      await transactions.createTransaction(sellAction.hash, CHAIN_ID)
+      await transactionsApi.createTransaction(sellAction.hash, CHAIN_ID)
     }
 
     setIsLoading(false)

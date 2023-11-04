@@ -18,7 +18,7 @@ const getUser = (wallet: string) => {
 
 
 
-export const users = {
+export const usersApi = {
   createUser,
   getUser
 };
