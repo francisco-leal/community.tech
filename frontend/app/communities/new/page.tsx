@@ -55,7 +55,7 @@ export default function NewCommunity() {
     return <>
       <div className="text-center text-2xl font-bold mb-4">Create community</div>
       <div className="mb-4 p-4 bg-green-100 rounded-lg">
-        <p className="font-semibold">Your community's SAFE wallet has been created. The address is:</p>
+        <p className="font-semibold">Your community{"&apos"}s SAFE wallet has been created. The address is:</p>
         <code className="block mt-2 text-sm bg-gray-200 rounded p-2">
           0xc0ffee254729296a45a3885639AC7E10F9d54979
         </code>
