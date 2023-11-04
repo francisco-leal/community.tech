@@ -1,10 +1,36 @@
 "use client"
+import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { useRouter } from 'next/navigation'
+import { usersApi, membershipsApi } from "@/lib/api"
+import { User, Membership } from "@/lib/api/types"
 
 export default function MembersPage({ params }: { params: { name: string } }) {
   const router = useRouter()
+  const [user, setUser] = React.useState<User>()
+  const [memberships, setMemberships] = React.useState<Membership[]>([])
+
+  React.useEffect(() => {
+    getUser();
+    getMemberships();
+  }, [])
+
+  async function getUser() {
+    const response = await usersApi.getUser(params.name).catch(error => console.error(error));
+    console.log(response)
+    if(response && response.status == 200) {
+      setUser(response.data.user);
+    }
+  }
+
+  async function getMemberships() {
+    const response = await membershipsApi.getMemberships(params.name).catch(error => console.error(error));
+    console.log(response)
+    if(response && response.status == 200) {
+      setMemberships(response.data.memberships);
+    }
+  }
 
   async function onClick(event: React.SyntheticEvent, name: string) {
     event.preventDefault()
@@ -46,40 +72,28 @@ export default function MembersPage({ params }: { params: { name: string } }) {
             </Avatar>
             <div>
               <h2 className="text-xl font-bold">{params.name}</h2>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">@username</p>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">0x3D980E50508...</p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">{user?.telegram_handle}</p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">{user?.wallet}</p>
             </div>
           </div>
-          <h3 className="text-lg font-semibold mb-4">Communities: 5</h3>
+          <h3 className="text-lg font-semibold mb-4">Communities: {user?.communities_count}</h3>
           <div className="space-y-4">
-            <div className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, "talentprotocol")}>
+          {memberships.map((membership) => (
+              <div key={membership.community.name} className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, membership.community.name)}>
               <Avatar className="h-10 w-10">
-                <AvatarImage alt="Community Avatar" src="/default-profile-picture.png" />
+                <AvatarImage alt="Community Avatar" src={membership.community.picture_url} />
                 <AvatarFallback>CA</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
-                <h4 className="text-md font-medium">Talent Protocol</h4>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Members: 120</p>
+                <h4 className="text-md font-medium">{membership.community.name}</h4>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">Members: {membership.community.members_count}</p>
               </div>
               <div className="text-right">
                 <p className="font-semibold">0.0032 ETH</p>
-                <span className="inline-block mt-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Owner</span>
+                <span className="inline-block mt-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">{membership.tier} - {membership.keys} keys</span>
               </div>
             </div>
-            <div className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, "denites")}>
-              <Avatar className="h-10 w-10">
-                <AvatarImage alt="Community Avatar" src="/default-profile-picture.png" />
-                <AvatarFallback>CA</AvatarFallback>
-              </Avatar>
-              <div className="flex-grow">
-                <h4 className="text-md font-medium">Denites</h4>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Members: 80</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold">0.002 ETH</p>
-                <span className="inline-block mt-1 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">Gold</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </main>
@@ -119,7 +133,7 @@ export default function MembersPage({ params }: { params: { name: string } }) {
             <path d="M12 8v8" />
           </svg>
         </Button>
-        <Button variant="ghost" onClick={(e) => goToProfile(e, "leal.eth")}>
+        <Button variant="ghost" onClick={(e) => goToProfile(e, params.name)}>
           <svg
             className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-300"
             fill="none"

@@ -10,7 +10,7 @@ import { Icons } from "@/components/icons"
 import { ethers } from 'ethers'
 import CommunityKeys from "@/lib/abi/CommunityKeys.json"
 import { communitiesApi } from "@/lib/api/communities"
-import { transactions } from "@/lib/api"
+import { transactionsApi } from "@/lib/api"
 import { COMMUNITY_CONTRACT_ADDRESS, CHAIN_ID } from "@/lib/utils"
 
 interface CreateSafeProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -52,7 +52,7 @@ export function CreateCommunity({ className, nextStep, profile, ...props }: Crea
         profile.profile_picture_url,
         profile.safeAddress
       )
-      await transactions.createTransaction(createTx.hash, CHAIN_ID)
+      await transactionsApi.createTransaction(createTx.hash, CHAIN_ID)
     }
 
     nextStep(event);

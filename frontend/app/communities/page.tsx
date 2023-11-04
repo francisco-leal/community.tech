@@ -79,7 +79,7 @@ export default function Communities() {
             {communities.map((community) => (
               <div key={community.name} className="flex items-center space-x-4 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer" onClick={(e) => onClick(e, community.name)}>
               <Avatar className="h-10 w-10">
-                <AvatarImage alt="Community Avatar" src={community.profile_picture} />
+                <AvatarImage alt="Community Avatar" src={community.picture_url} />
                 <AvatarFallback>CA</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
@@ -88,7 +88,6 @@ export default function Communities() {
               </div>
               <div className="text-right">
                 <p className="font-semibold">0.0032 ETH</p>
-                <span className="inline-block mt-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">{community.owner.wallet}</span>
               </div>
             </div>
             ))}
@@ -131,7 +130,7 @@ export default function Communities() {
             <path d="M12 8v8" />
           </svg>
         </Button>
-        <Button variant="ghost" onClick={(e) => goToProfile(e, "leal.eth")}>
+        <Button variant="ghost" onClick={(e) => goToProfile(e, wallet)}>
           <svg
             className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-300"
             fill="none"

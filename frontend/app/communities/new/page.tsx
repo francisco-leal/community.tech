@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import Web3Provider from '@/lib/web3Context'
 import { CreateSafe } from '@/components/create-safe'
 import { CreateCommunity } from '@/components/create-community'
-import { users } from '@/lib/api'
+import { usersApi } from '@/lib/api'
 
 export default function NewCommunity() {
   const [wallet, setWallet] = React.useState<string>("Connect Wallet")
@@ -43,7 +43,7 @@ export default function NewCommunity() {
       const storedWallet = sessionStorage.getItem('wallet');
       if (storedWallet) {
         setWallet(storedWallet);
-        users.getUser(storedWallet).then((res) => {
+        usersApi.getUser(storedWallet).then((res) => {
           setTelegramCode(res.data.user.telegram_code);
         }).catch(() => console.log("ERROR FETCHING USER"));
       } else {
