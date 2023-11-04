@@ -7,6 +7,6 @@ class KickFromTelegram
   end
 
   def call(user, membership)
-    @bot.kickChatMember(chat_id: membership.chat_id, user_id: user.telegram_user_id)
+    @bot.api.kickChatMember(chat_id: membership.chat_id, user_id: user.telegram_user_id)
   end
 end
