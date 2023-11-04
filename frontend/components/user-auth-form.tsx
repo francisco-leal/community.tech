@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
+import { useContext } from "react"
+import { ConfigContext } from "@/lib/web3Context"
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -13,14 +15,22 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const router = useRouter()
 
+  const web3Auth = useContext(ConfigContext);
+
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
     setIsLoading(true)
+    
+    if(web3Auth) {
+      const authKitSignData = await web3Auth.signIn()
 
-    setTimeout(() => {
-      router.push('/setup')
-      setIsLoading(false)
-    }, 3000)
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('wallet', authKitSignData.eoa);
+      }
+    }
+
+    router.push('/setup')
+    setIsLoading(false)
   }
 
   return (

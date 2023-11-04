@@ -4,8 +4,12 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
+import Web3Provider from '@/lib/web3Context'
+import { CreateSafe } from '@/components/create-safe'
 
 export default function NewCommunity() {
+  const [wallet, setWallet] = React.useState<string>("Connect Wallet")
+  const [communityProfile, setCommunityProfile] = React.useState<any>({})
   const [step, setStep] = React.useState<number>(1)
   const router = useRouter()
 
@@ -29,24 +33,42 @@ export default function NewCommunity() {
     router.push('/communities')
   }
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedWallet = sessionStorage.getItem('wallet');
+      if (storedWallet) {
+        setWallet(storedWallet);
+      } else {
+        router.push('/');
+      }
+    }
+  });
+
+  const updateCommunityProfile = (e: string, target: string) => {
+    setCommunityProfile((prev: any) => ({
+      ...prev,
+      [target]: e
+    }));
+  };
+
   const firstStep = () => {
     return <>
       <div className="text-center text-2xl font-bold mb-4">Create community</div>
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
-        <Input id="name" placeholder="Enter community name" required />
+        <Input id="name" placeholder="Enter community name" required onChange={(e) => updateCommunityProfile(e.target.value, "name")}/>
       </div>
       <div className="space-y-2">
         <Label htmlFor="username">Handle</Label>
-        <Input id="handle" placeholder="Enter handle" required />
+        <Input id="handle" placeholder="Enter handle" required onChange={(e) => updateCommunityProfile(e.target.value, "handle")}/>
       </div>
       <div className="space-y-2">
         <Label htmlFor="picture">Picture URL</Label>
-        <Input id="picture" placeholder="Enter picture URL" required type="url" />
+        <Input id="picture" placeholder="Enter picture URL" required type="url" onChange={(e) => updateCommunityProfile(e.target.value, "profile_picture_url")}/>
       </div>
       <div className="flex justify-between">
         <Button variant="outline" onClick={onCancel}>Cancel</Button>
-        <Button onClick={nextStep}>Next</Button>
+        <CreateSafe nextStep={nextStep}/>
       </div>
     </>
   }
@@ -87,67 +109,69 @@ export default function NewCommunity() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="fixed top-0 left-0 right-0 bg-white dark:bg-zinc-800 shadow-md z-50 p-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold">community.tech</h1>
-        <Button
-          className="text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white dark:text-blue-300 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-black"
-          variant="outline"
-        >
-          Connect Wallet
-        </Button>
-      </header>
-      <main className="flex-grow flex justify-center mt-32">
-        <form className="space-y-6 w-full max-w-md mx-auto px-8">
-          <div className="flex justify-center space-x-2 mb-4">
-            <svg
-              className={`w-3 h-3 ${step === 1 ? "text-black dark:text-white" : "text-gray-400 dark:text-gray-600"}`}
-              fill={step === 1 ? "currentColor" : "none"}
-              height="24"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="12" cy="12" r="10" />
-            </svg>
-            <svg
-              className={`w-3 h-3 ${step === 2 ? "text-black dark:text-white" : "text-gray-400 dark:text-gray-600"}`}
-              fill={step === 2 ? "currentColor" : "none"}
-              height="24"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="12" cy="12" r="10" />
-            </svg>
-            <svg
-              className={`w-3 h-3 ${step === 3 ? "text-black dark:text-white" : "text-gray-400 dark:text-gray-600"}`}
-              fill={step === 3 ? "currentColor" : "none"}
-              height="24"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="12" cy="12" r="10" />
-            </svg>
-          </div>
-          {step === 1 && firstStep()}
-          {step === 2 && secondStep()}
-          {step === 3 && thirdStep()}
-        </form>
-      </main>
-    </div>
+    <Web3Provider>
+      <div className="flex flex-col h-screen">
+        <header className="fixed top-0 left-0 right-0 bg-white dark:bg-zinc-800 shadow-md z-50 p-4 flex items-center justify-between">
+          <h1 className="text-xl font-bold">community.tech</h1>
+          <Button
+            className="text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white dark:text-blue-300 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-black"
+            variant="outline"
+          >
+            {wallet}
+          </Button>
+        </header>
+        <main className="flex-grow flex justify-center mt-32">
+          <form className="space-y-6 w-full max-w-md mx-auto px-8">
+            <div className="flex justify-center space-x-2 mb-4">
+              <svg
+                className={`w-3 h-3 ${step === 1 ? "text-black dark:text-white" : "text-gray-400 dark:text-gray-600"}`}
+                fill={step === 1 ? "currentColor" : "none"}
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+              <svg
+                className={`w-3 h-3 ${step === 2 ? "text-black dark:text-white" : "text-gray-400 dark:text-gray-600"}`}
+                fill={step === 2 ? "currentColor" : "none"}
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+              <svg
+                className={`w-3 h-3 ${step === 3 ? "text-black dark:text-white" : "text-gray-400 dark:text-gray-600"}`}
+                fill={step === 3 ? "currentColor" : "none"}
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+            </div>
+            {step === 1 && firstStep()}
+            {step === 2 && secondStep()}
+            {step === 3 && thirdStep()}
+          </form>
+        </main>
+      </div>
+    </Web3Provider>
   )
 }
