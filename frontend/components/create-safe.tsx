@@ -3,7 +3,6 @@
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
-import { useRouter } from 'next/navigation'
 import { useContext } from "react"
 import { ConfigContext } from "@/lib/web3Context"
 import { Icons } from "@/components/icons"
@@ -13,11 +12,11 @@ import { SafeFactory, EthersAdapter, SafeAccountConfig } from '@safe-global/prot
 
 interface CreateSafeProps extends React.HTMLAttributes<HTMLDivElement> {
   nextStep: Function,
+  setSafe: Function,
 }
 
-export function CreateSafe({ className, nextStep, ...props }: CreateSafeProps) {
+export function CreateSafe({ className, nextStep, setSafe, ...props }: CreateSafeProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const router = useRouter()
 
   const web3Auth = useContext(ConfigContext);
 
@@ -32,6 +31,13 @@ export function CreateSafe({ className, nextStep, ...props }: CreateSafeProps) {
 
       const provider = new ethers.providers.Web3Provider(web3AuthProvider)
       const signer = provider.getSigner()
+      const address = await signer.getAddress()
+
+      if(!address) {
+        web3Auth.signIn()
+        setIsLoading(false)
+        return;
+      }
 
       const ethAdapter = new EthersAdapter({
         ethers,
@@ -40,9 +46,7 @@ export function CreateSafe({ className, nextStep, ...props }: CreateSafeProps) {
 
       const safeFactory = await SafeFactory.create({ ethAdapter: ethAdapter })
       const safeAccountConfig: SafeAccountConfig = {
-        owners: [
-          await signer.getAddress(),
-        ],
+        owners: [address],
         threshold: 1,
       }
 
@@ -51,9 +55,10 @@ export function CreateSafe({ className, nextStep, ...props }: CreateSafeProps) {
       const safeAddress = await safeSdkOwner1.getAddress()
 
       console.log("SAFE ADDRESS: ", safeAddress);
+      setSafe(safeAddress)
     }
 
-    nextStep();
+    nextStep(event);
     setIsLoading(false)
   }
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 import Web3Provider from '@/lib/web3Context'
 import { CreateSafe } from '@/components/create-safe'
+import { CreateCommunity } from '@/components/create-community'
 
 export default function NewCommunity() {
   const [wallet, setWallet] = React.useState<string>("Connect Wallet")
@@ -19,7 +20,9 @@ export default function NewCommunity() {
   };
   
   async function nextStep(event: React.SyntheticEvent) {
-    event.preventDefault()
+    if(event) {
+      event.preventDefault()
+    }
     setStep((prev) => prev + 1)
   }
 
@@ -68,7 +71,7 @@ export default function NewCommunity() {
       </div>
       <div className="flex justify-between">
         <Button variant="outline" onClick={onCancel}>Cancel</Button>
-        <CreateSafe nextStep={nextStep}/>
+        <CreateSafe nextStep={nextStep} setSafe={(safeAddress: string) => updateCommunityProfile(safeAddress, "safeAddress")}/>
       </div>
     </>
   }
@@ -79,19 +82,19 @@ export default function NewCommunity() {
       <div className="mb-4 p-4 bg-green-100 rounded-lg">
         <p className="font-semibold">Your community{"&apos"}s SAFE wallet has been created. The address is:</p>
         <code className="block mt-2 text-sm bg-gray-200 rounded p-2">
-          0xc0ffee254729296a45a3885639AC7E10F9d54979
+          {communityProfile.safeAddress || "Something went wrong"}
         </code>
       </div>
       <div className="space-y-2">
         <Label htmlFor="feePercentage">Fee Percentage</Label>
-        <Input id="feePercentage" placeholder="Enter fee percentage" required />
+        <Input id="feePercentage" placeholder="Enter fee percentage" required onChange={(e) => updateCommunityProfile(e.target.value, "fee")}/>
         <p className="text-sm text-gray-500">
           This field determines the percentage of fees that will be taken from transactions within your community.
         </p>
       </div>
       <div className="flex justify-between">
         <Button variant="outline" onClick={previousStep}>Back</Button>
-        <Button onClick={nextStep}>Next</Button>
+        <CreateCommunity nextStep={nextStep} profile={communityProfile}/>
       </div>
     </>
   }
