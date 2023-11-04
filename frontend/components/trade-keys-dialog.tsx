@@ -20,7 +20,7 @@ import { useContext } from "react"
 import { ConfigContext } from "@/lib/web3Context"
 import { COMMUNITY_CONTRACT_ADDRESS, CHAIN_ID } from "@/lib/utils"
  
-export function TradeKeysDialog() {
+export function TradeKeysDialog({ communityName }: { communityName: string }) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [sellPrice, setSellPrice] = React.useState<string>("0");
   const [buyPrice, setBuyPrice] = React.useState<string>("0");
@@ -40,12 +40,12 @@ export function TradeKeysDialog() {
         const contract = new ethers.Contract(COMMUNITY_CONTRACT_ADDRESS, CommunityKeys.abi, provider);
         const buyer = await provider.getSigner();
 
-        const calculatedBuyPrice = await contract.getBuyPrice("denites", 1);
-        const calculatedSellPrice = await contract.getSellPrice("denites", 1);
+        const calculatedBuyPrice = await contract.getBuyPrice(communityName, 1);
+        const calculatedSellPrice = await contract.getSellPrice(communityName, 1);
         setSellPrice(ethers.utils.formatUnits(calculatedSellPrice));
         setBuyPrice(ethers.utils.formatUnits(calculatedBuyPrice));
 
-        const calculatedNumberOfKeys = await contract.communityKeys("denites", await buyer.getAddress());
+        const calculatedNumberOfKeys = await contract.communityKeys(communityName, await buyer.getAddress());
         setNumberOfKeys(calculatedNumberOfKeys.toNumber());
       }
     }
@@ -65,8 +65,8 @@ export function TradeKeysDialog() {
 
       const contract = new ethers.Contract(COMMUNITY_CONTRACT_ADDRESS, CommunityKeys.abi, signer);
 
-      const price = await contract.getBuyPriceAfterFee("denites", 1);
-      const buyAction = await contract.connect(signer).buyKey("denites", { value: price });
+      const price = await contract.getBuyPriceAfterFee(communityName, 1);
+      const buyAction = await contract.connect(signer).buyKey(communityName, { value: price });
       await buyAction.wait();
 
       await transactionsApi.createTransaction(buyAction.hash, CHAIN_ID)
@@ -94,7 +94,7 @@ export function TradeKeysDialog() {
 
       const contract = new ethers.Contract(COMMUNITY_CONTRACT_ADDRESS, CommunityKeys.abi, signer);
 
-      const sellAction = await contract.connect(signer).sellKeys("denites", 1);
+      const sellAction = await contract.connect(signer).sellKeys(communityName, 1);
       await sellAction.wait();
 
       await transactionsApi.createTransaction(sellAction.hash, CHAIN_ID)

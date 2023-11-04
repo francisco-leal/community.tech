@@ -4,7 +4,10 @@ class UsersController < ApplicationController
   end
 
   def create
-    user = User.create!(user_params)
+    user = User.create!(
+      wallet: user_params[:wallet].downcase,
+      telegram_handle: user_params[:telegram_handle]
+    )
 
     render json: {user: UserBlueprint.render_as_json(user, view: :normal) }, status: :ok
   end
