@@ -31,8 +31,6 @@ class CreateTransaction
         )
 
         upsert_community_membership(transaction) if transaction.community_key_bought? || transaction.community_key_sold?
-
-        transaction
       end
     end
   end
