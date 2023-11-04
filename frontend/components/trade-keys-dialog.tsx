@@ -4,12 +4,11 @@ import * as React from "react"
 import { ethers } from 'ethers'
 import CommunityKeys from "@/lib/abi/CommunityKeys.json"
 import { Icons } from "@/components/icons"
-import { transactions } from "@/lib/api"
+import { transactions, users } from "@/lib/api"
 import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -26,6 +25,7 @@ export function TradeKeysDialog() {
   const [sellPrice, setSellPrice] = React.useState<string>("0");
   const [buyPrice, setBuyPrice] = React.useState<string>("0");
   const [numberOfKeys, setNumberOfKeys] = React.useState<number>(0);
+  const [telegramCode, setTelegramCode] = React.useState<string>("");
   const web3Auth = useContext(ConfigContext);
 
   React.useEffect(() => {
@@ -70,6 +70,11 @@ export function TradeKeysDialog() {
       await buyAction.wait();
 
       await transactions.createTransaction(buyAction.hash, CHAIN_ID)
+      if (numberOfKeys == 0) {
+        const response = await users.getUser(await signer.getAddress())
+
+        setTelegramCode(response.data.user.telegram_code);
+      }
     }
 
     setIsLoading(false)
@@ -98,6 +103,11 @@ export function TradeKeysDialog() {
     setIsLoading(false)
   }
 
+  async function finish(event: React.SyntheticEvent) {
+    event.preventDefault()
+    window.open("https://t.me/collective_tech_bot", "_blank")
+  }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -111,7 +121,6 @@ export function TradeKeysDialog() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Trade Keys</AlertDialogTitle>
-
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">You own {numberOfKeys} key</p>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
               <span className="inline-block bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs font-semibold text-gray-700 dark:text-gray-300 mr-2">
@@ -128,28 +137,39 @@ export function TradeKeysDialog() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <Button
-            className="w-full bg-red-500 hover:bg-red-600 text-white dark:bg-red-300 dark:hover:bg-red-200"
-            variant="default"
-            onClick={sellKey}
-            disabled={isLoading}
-          >
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Sell for {sellPrice} ETH
-          </Button>
-          <Button
-            className="w-full mb-2 bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-300 dark:hover:bg-blue-200"
-            variant="default"
-            onClick={buyKey}
-            disabled={isLoading}
-          >
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Buy for {buyPrice} ETH
-          </Button>
+          {!telegramCode && (
+            <>
+              <Button
+                className="w-full bg-red-500 hover:bg-red-600 text-white dark:bg-red-300 dark:hover:bg-red-200"
+                variant="default"
+                onClick={sellKey}
+                disabled={isLoading}
+              >
+                {isLoading && (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Sell for {sellPrice} ETH
+              </Button>
+              <Button
+                className="w-full mb-2 bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-300 dark:hover:bg-blue-200"
+                variant="default"
+                onClick={buyKey}
+                disabled={isLoading}
+              >
+                {isLoading && (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Buy for {buyPrice} ETH
+              </Button>
+            </>
+          )}
+          {!!telegramCode && (
+            <>
+              <p className="mt-4 text-center text-xl font-semibold">Talk with our bot for access, this is your one time code</p>
+              <p className="mt-4 text-center text-xl font-semibold">{telegramCode}</p>
+              <Button onClick={finish}>Configure Telegram</Button>
+            </>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
