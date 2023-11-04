@@ -38,7 +38,6 @@ export default function CommunityPage({ params }: { params: { name: string } }) 
     }
   }
 
-
   async function getMemberships() {
     const response = await membershipsApi.getCommunityMemberships(params.name).catch(error => console.error(error));
     console.log(response)
@@ -76,7 +75,7 @@ export default function CommunityPage({ params }: { params: { name: string } }) 
             className="text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white dark:text-blue-300 dark:border-blue-300 dark:hover:bg-blue-300 dark:hover:text-black"
             variant="outline"
           >
-            Connect Wallet
+            {wallet}
           </Button>
         </header>
         <main className="pt-20 pb-16">
