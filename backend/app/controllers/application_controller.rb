@@ -4,11 +4,11 @@ class ApplicationController < ActionController::API
   private
 
   def user!
-    User.find_by!(wallet: wallet)
+    User.find_by!(wallet: wallet&.downcase)
   end
 
   def user
-    @user ||= User.find_by(wallet: wallet)
+    @user ||= User.find_by(wallet: wallet&.downcase)
   end
 
   def wallet

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_03_204616) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_03_232631) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,6 +34,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_03_204616) do
     t.datetime "ceased_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "keys", default: 0
     t.index ["community_id"], name: "index_community_memberships_on_community_id"
     t.index ["user_id"], name: "index_community_memberships_on_user_id"
   end
@@ -53,6 +54,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_03_204616) do
     t.string "wallet", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "telegram_handle"
     t.index ["wallet"], name: "index_users_on_wallet", unique: true
   end
 

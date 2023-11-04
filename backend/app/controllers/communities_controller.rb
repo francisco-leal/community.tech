@@ -3,14 +3,18 @@ class CommunitiesController < ApplicationController
     communities = Community.all
 
     if keyword
-      communities = communities.where("name ILIKE :keyword OR description ILIKE :keyword",  keyword: "%#{:keyword}%")
+      communities = communities.where("name ILIKE :keyword OR description ILIKE :keyword",  keyword: "%#{keyword}%")
+    end
+
+    if name
+      communities = communities.where(name: name)
     end
 
     render json: {communities: CommunityBlueprint.render_as_json(communities.includes(:owner), view: :normal) }, status: :ok
   end
 
   def create
-    community = Community.create!(community_params.merge(owner: user))
+    community = Community.create!(community_params.merge(owner: user!))
 
     render json: {community: CommunityBlueprint.render_as_json(community, view: :normal) }, status: :ok
   end
@@ -19,6 +23,10 @@ class CommunitiesController < ApplicationController
 
   def keyword
     params["keyword"]
+  end
+
+  def name
+    params["name"]
   end
 
   def community_params

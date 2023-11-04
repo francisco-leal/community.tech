@@ -1,4 +1,4 @@
-class CommunityMembershipsController < ApplicationController
+class MembershipsController < ApplicationController
   def index
     community_memberships = CommunityMembership.active.where(user: user!)
 
