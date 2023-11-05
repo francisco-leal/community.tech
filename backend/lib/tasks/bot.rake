@@ -26,6 +26,7 @@ namespace :bot do
             member_limit: 1 # This makes the link single-use
           )
 
+          puts 'INVITE LINK: #{response["result"]["invite_link"]}'
           bot.api.answer_callback_query(
             callback_query_id: message.id,
             text: "You're ready to join #{community.name.titleize}. Tap to join the community!",
