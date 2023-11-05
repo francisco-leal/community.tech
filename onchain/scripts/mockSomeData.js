@@ -4,7 +4,7 @@ const CommunityKeysArtifact = require("../artifacts/contracts/CommunityKeys.sol/
 async function main() {
   const [deployer] = await ethers.getSigners();
 
-  const address = "0x4275854fDEF5EE848a2F9F9e10f17119E285A498";
+  const address = "0x0846c393EBDA7214be271A3C2Ddc63B77ffDA7bd";
   const contract = new ethers.Contract(address, CommunityKeysArtifact.abi, deployer);
 
   const createTx = await contract.connect(deployer).createCommunity(deployer.address, ethers.parseUnits("0.05", "ether"), "denites");
