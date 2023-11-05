@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import Web3Provider from '@/lib/web3Context'
 import { membershipsApi, communitiesApi } from "@/lib/api"
 import { Membership, Community } from "@/lib/api/types"
+import { PriceOfCommunity } from "@/components/price-of-community"
 
 export default function CommunityPage({ params }: { params: { name: string } }) {
   const [wallet, setWallet] = React.useState<string>("Connect Wallet")
@@ -88,7 +89,7 @@ export default function CommunityPage({ params }: { params: { name: string } }) 
               <div className="flex-grow">
                 <h2 className="text-xl font-bold">{params.name}</h2>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">Owner: {community?.owner?.wallet}</p>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Key Price: 0.01 ETH</p>
+                <PriceOfCommunity communityName={params.name}/>
               </div>
               <TradeKeysDialog communityName={params.name}/>
             </div>
