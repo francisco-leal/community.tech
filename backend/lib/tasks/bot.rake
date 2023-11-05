@@ -26,7 +26,11 @@ namespace :bot do
             member_limit: 1 # This makes the link single-use
           )
 
-          puts 'INVITE LINK: #{response["result"]["invite_link"]}'
+          puts "INVITE LINK: #{response["result"]["invite_link"]}"
+          # bot.api.send_message(
+          #   chat_id: community.telegram_chat_id,
+          #   text: "this is your unique invite code: #{response['result']['invite_link0']}"
+          # )
           bot.api.answer_callback_query(
             callback_query_id: message.id,
             text: "You're ready to join #{community.name.titleize}. Tap to join the community!",
@@ -51,7 +55,7 @@ namespace :bot do
 
           if user
             # User found, update the telegram_user_id
-            user.update!(telegram_user_id: message.from.id)
+            user.update!(telegram_user_id: message.from.id, telegram_chat_id: message.chat.id)
 
             kb = [[]]
             CommunityMembership.where(user: user).map do |membership|

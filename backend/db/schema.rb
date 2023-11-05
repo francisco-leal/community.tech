@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_05_102334) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_05_103830) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,6 +58,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_05_102334) do
     t.string "telegram_handle"
     t.string "telegram_code"
     t.integer "telegram_user_id"
+    t.string "telegram_chat_id"
     t.index ["wallet"], name: "index_users_on_wallet", unique: true
   end
 
