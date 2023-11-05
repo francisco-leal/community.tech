@@ -171,9 +171,9 @@ export function TradeKeysDialog({ communityName }: { communityName: string }) {
           )}
           {!!telegramCode && (
             <AlertDialogFooter className="sm:flex-col sm:items-center">
-              <p className="mt-4 text-center font-semibold">Talk with our bot for access, this is your one time code</p>
-              <p className="mb-4 mt-2 text-center text-xl font-semibold">{telegramCode}</p>
               <Button onClick={finish}>Configure Telegram</Button>
+              <p className="mb-4 mt-2 text-center text-xl font-semibold">{telegramCode}</p>
+              <p className="mt-4 text-center font-semibold">Talk with our bot for access, this is your one time code</p>
             </AlertDialogFooter>
           )}
       </AlertDialogContent>
